@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Staff panel – GrandStay Hotel</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header id="site-header"></header>
+
+  <main id="main" class="section">
+    <div class="container">
+      <p class="eyebrow">Reception &amp; manager</p>
+      <h1 style="font-size:2rem">Staff panel</h1>
+      <div class="alert alert--info small">Prototype view of deliverable D2. A real version needs staff login. These rows come from the backend database when the server is running (otherwise from the browser demo).</div>
+
+      <div class="stats" id="stats" aria-live="polite"></div>
+
+      <!-- 1. All bookings in one place (replaces the paper book) -->
+      <section style="margin-bottom:2.5rem">
+        <h2 style="font-size:1.4rem">All bookings</h2>
+        <div class="toolbar">
+          <label for="status-filter" class="sr-only">Filter by status</label>
+          <select id="status-filter">
+            <option value="">All statuses</option>
+            <option>PENDING</option><option>CONFIRMED</option><option>CANCELLED</option>
+          </select>
+          <button class="btn btn--sm btn--ghost" id="seed-btn" type="button">Load sample bookings</button>
+          <button class="btn btn--sm btn--ghost" id="reset-btn" type="button">Reset all data</button>
+        </div>
+        <div class="table-wrap"><table class="data" id="bookings-table">
+          <thead><tr><th>No.</th><th>Guest</th><th>Contact</th><th>Room</th><th>Dates</th><th>Total</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody></tbody>
+        </table></div>
+      </section>
+
+      <!-- 2. Room board for one day -->
+      <section style="margin-bottom:2.5rem">
+        <h2 style="font-size:1.4rem">Room board</h2>
+        <div class="toolbar">
+          <label for="board-date" class="muted">Date:</label>
+          <input type="date" id="board-date">
+        </div>
+        <div class="legend">
+          <span><i style="background:#fff"></i>Free</span>
+          <span><i style="background:var(--ok-bg)"></i>Confirmed</span>
+          <span><i style="background:var(--warn-bg)"></i>Pending</span>
+          <span class="muted">Hover a room to read the receptionist's note.</span>
+        </div>
+        <div class="room-grid" id="room-grid"></div>
+      </section>
+
+      <!-- 3. The acceptance tests from Task 07, runnable -->
+      <section>
+        <h2 style="font-size:1.4rem">Concurrency test (acceptance criteria)</h2>
+        <p class="muted" style="max-width:70ch">Task 07 says: <em>“In a test with 50 requests at the same time for one room, only one booking is saved, and no booking is lost in 100 test bookings.”</em> Run it here. With the backend running, the second result comes from 50 real HTTP requests to the server (the test booking is cancelled afterwards).</p>
+        <div class="toolbar">
+          <button class="btn" id="race-btn" type="button">Run: 50 guests, 1 room, same time</button>
+          <button class="btn btn--teal" id="load-btn" type="button">Run: 100 test bookings</button>
+        </div>
+        <div id="test-out" class="test-result" aria-live="polite"></div>
+      </section>
+    </div>
+  </main>
+
+  <footer id="site-footer"></footer>
+  <script src="js/data.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/api-client.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/staff.js"></script>
+</body>
+</html>

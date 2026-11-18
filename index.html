@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GrandStay Hotel – Book your room online</title>
+  <meta name="description" content="Book a room at GrandStay Hotel in under three minutes. Pay by card and get your confirmation by email.">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header id="site-header"></header>
+
+  <main id="main">
+    <!-- HERO + SEARCH FORM (WBS 1.2: search page) -->
+    <section class="hero">
+      <div class="container">
+        <p class="eyebrow" style="color:#e6d6a8">GrandStay Hotel · Almaty</p>
+        <h1>Book your room in under 3 minutes.</h1>
+        <p>Choose your dates, pay by card, and get your confirmation by email within a minute. Booking is open 24 hours, also at night.</p>
+
+        <form class="search-bar" id="search-form" novalidate>
+          <div class="field" id="f-in">
+            <label for="check-in">Check-in</label>
+            <input type="date" id="check-in" name="check_in_date" required>
+          </div>
+          <div class="field" id="f-out">
+            <label for="check-out">Check-out</label>
+            <input type="date" id="check-out" name="check_out_date" required>
+          </div>
+          <button class="btn" type="submit">Check availability</button>
+          <p class="error" id="search-error" role="alert" style="margin:0;color:var(--bad);font-size:.88rem"></p>
+        </form>
+      </div>
+    </section>
+
+    <!-- ROOM TYPES (data from the ROOM_TYPES table) -->
+    <section class="section" id="rooms">
+      <div class="container">
+        <div class="section__head">
+          <p class="eyebrow">Rooms</p>
+          <h2>Choose your room type</h2>
+          <p class="muted" id="results-summary">Loading rooms…</p>
+        </div>
+        <div class="grid grid--3" id="room-list" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <!-- HOW IT WORKS (the 4 steps of the digital transaction from Task 06) -->
+    <section class="section section--tint">
+      <div class="container">
+        <div class="section__head">
+          <p class="eyebrow">How it works</p>
+          <h2>Four simple steps</h2>
+          <p class="muted">The same flow we analysed in our system map: Client → Server → Payment → Email → Confirmation.</p>
+        </div>
+        <ol class="steps">
+          <li><h3>Choose</h3><p>Pick your dates and a room type. You see the number of free rooms before you decide.</p></li>
+          <li><h3>Your details</h3><p>Enter name, email and phone. Add a special request, for example a quiet room.</p></li>
+          <li><h3>Pay by card</h3><p>Your card is turned into a secure token in your browser. The hotel never sees the card number.</p></li>
+          <li><h3>Confirmation</h3><p>You get a booking number on the screen and a confirmation email in less than one minute.</p></li>
+        </ol>
+        <p style="margin-top:1.5rem"><a href="docs.html#system-map">See the full system map →</a></p>
+      </div>
+    </section>
+
+    <!-- TRUST: the 3 failures from Task 06, shown as guest benefits -->
+    <section class="section">
+      <div class="container">
+        <div class="section__head">
+          <p class="eyebrow">Safe booking</p>
+          <h2>Built to avoid the usual booking problems</h2>
+        </div>
+        <div class="grid grid--3">
+          <div class="trust"><div class="icon" aria-hidden="true">🛏️</div><div><h3>No double bookings</h3><p>One room, one guest, one date. The database refuses a second booking for the same room.</p><a href="docs.html#failures">How we protect it →</a></div></div>
+          <div class="trust"><div class="icon" aria-hidden="true">🔒</div><div><h3>Card data protected</h3><p>We send a payment token, not your card number. Payment keys stay on the server.</p><a href="docs.html#failures">Security design →</a></div></div>
+          <div class="trust"><div class="icon" aria-hidden="true">🔁</div><div><h3>Never charged twice</h3><p>If your connection breaks and you press “Pay” again, the system recognises the same request.</p><a href="docs.html#failures">Read more →</a></div></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer id="site-footer"></footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/api-client.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/search.js"></script>
+</body>
+</html>

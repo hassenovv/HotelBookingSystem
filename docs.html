@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Project documentation – GrandStay Hotel Booking System</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header id="site-header"></header>
+
+  <div class="container docs-layout">
+    <nav class="toc" aria-label="On this page">
+      <ul id="toc">
+        <li><a href="#overview">1. Project overview</a></li>
+        <li><a href="#system-map">2. System map</a></li>
+        <li><a href="#failures">3. Three failures</a></li>
+        <li><a href="#cia">4. CIA analysis</a></li>
+        <li><a href="#data">5. Data &amp; database</a></li>
+        <li><a href="#plan">6. Project plan</a></li>
+        <li><a href="#pilot">7. Pilot strategy</a></li>
+        <li><a href="#team">8. Team &amp; roles</a></li>
+      </ul>
+    </nav>
+
+    <main id="main">
+      <p class="eyebrow">Introduction to Information Systems · KBTU</p>
+      <h1 style="font-size:2.4rem">Hotel Booking System: project documentation</h1>
+      <p class="muted">This page collects the content of our team reports (Task 06, Data task, Task 07) and shows where each idea appears in the working website.</p>
+
+      <!-- 1 ============================================== -->
+      <section class="doc-section" id="overview">
+        <p class="source">Task 07 · Part A</p>
+        <h2>1. Project overview</h2>
+        <div class="grid grid--2">
+          <div class="card card--flat">
+            <h3>The problem</h3>
+            <p>A small hotel with <strong>40 rooms</strong> takes bookings by phone and writes them in a paper book. Receptionists make mistakes, two guests can get the same room, and guests cannot book at night.</p>
+          </div>
+          <div class="card card--flat">
+            <h3>The proposed system</h3>
+            <p>A hotel booking website with a database and a staff panel. The guest chooses dates and a room, pays by card, and receives a confirmation by email. The staff see all bookings in one place.</p>
+          </div>
+        </div>
+        <h3>Users</h3>
+        <p><span class="tag">Guests</span> book and pay online · <span class="tag">Receptionists</span> see and change bookings · <span class="tag">Hotel manager</span> reports</p>
+        <h3>Deadline and budget</h3>
+        <p><strong>12 weeks</strong> and <strong>15,000 USD</strong> (developers, payment service, hosting, testing and staff training).</p>
+        <h3>Deliverables and scope</h3>
+        <div class="grid grid--2">
+          <div>
+            <p><strong>In scope</strong></p>
+            <ul>
+              <li><strong>D1</strong> Guest booking website → <a href="index.html">Home</a>, <a href="booking.html">Book a room</a>, <a href="bookings.html">My bookings</a></li>
+              <li><strong>D2</strong> Booking database and staff admin panel → <a href="staff.html">Staff panel</a></li>
+              <li><strong>D3</strong> Payment and confirmation message integration → payment step and email preview in the booking flow</li>
+            </ul>
+          </div>
+          <div>
+            <p><strong>Outside scope</strong></p>
+            <ul>
+              <li>A mobile app for iOS and Android</li>
+              <li>Connection to other booking sites (for example, Booking.com)</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2 ============================================== -->
+      <section class="doc-section" id="system-map">
+        <p class="source">Task 06 · Digital Transaction Analysis</p>
+        <h2>2. System map of the booking transaction</h2>
+        <p><strong>The transaction:</strong> a guest books and pays for a hotel room on the hotel website. The guest chooses the dates and the room, pays by card, and gets a booking confirmation by email.</p>
+        <div class="flow" aria-label="Flow of the transaction">
+          <span>Client</span><i>→</i><span>Request</span><i>→</i><span>Server (+ Database)</span><i>→</i><span>Payment API</span><i>→</i><span>Email API</span><i>→</i><span>Response</span><i>→</i><span>Client</span>
+        </div>
+        <figure class="figure">
+          <img src="assets/system-map.png" alt="Sequence diagram with Client, Database, Server, Payment API and Email API. Seven steps: booking request, save room, saved, charge card, paid, send email, confirmation.">
+          <figcaption>System map from Task 06: 1 booking request · 2 save room · 3 saved · 4 charge card · 5 paid · 6 send email · 7 confirmation.</figcaption>
+        </figure>
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>Part</th><th>What happens</th><th>Where in this website</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Client</strong></td><td>The guest uses a phone or computer browser, chooses the room and dates and clicks “Pay”.</td><td><code>booking.html</code> + <code>js/booking.js</code></td></tr>
+            <tr><td><strong>Request</strong></td><td>HTTPS request with room ID, check-in and check-out dates, guest name and email, and a payment token (not the real card number).</td><td>Request JSON built in <code>booking.js</code> (see the “Show JSON” box after booking)</td></tr>
+            <tr><td><strong>Server</strong></td><td>Checks the room is free, calculates the price, saves the booking and marks the room as taken. Then calls the two external APIs.</td><td><code>js/api.js</code> (mock server)</td></tr>
+            <tr><td><strong>Payment API</strong></td><td>Receives the token and the price, takes the money and answers “success” or “failed”.</td><td><code>Payment.charge()</code> in <code>api.js</code></td></tr>
+            <tr><td><strong>Email/SMS API</strong></td><td>After successful payment the server asks the email service to send the confirmation.</td><td>Email preview on the confirmation screen</td></tr>
+            <tr><td><strong>Response</strong></td><td>Booking number, status (confirmed or failed) and a short message. The guest sees the confirmation page.</td><td><code>showResult()</code> in <code>booking.js</code></td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <!-- 3 ============================================== -->
+      <section class="doc-section" id="failures">
+        <p class="source">Task 06 · Section 3</p>
+        <h2>3. Three possible failures and how the site handles them</h2>
+        <div class="grid grid--3">
+          <article class="card">
+            <h3>Network / latency</h3>
+            <p><strong>Problem:</strong> the connection breaks after “Pay”. The guest clicks again and may pay two times.</p>
+            <p><strong>In the site:</strong> the Pay button is disabled while waiting, and every attempt has an <em>idempotency key</em>. The server returns the saved answer for the same key, so there is no second charge. A payment timeout leaves the booking <span class="chip chip--PENDING">PENDING</span>.</p>
+          </article>
+          <article class="card">
+            <h3>Database / ACID</h3>
+            <p><strong>Problem:</strong> two guests book the last free room at the same time. Both read “free” before either saves. Breaks Isolation and Consistency.</p>
+            <p><strong>In the site:</strong> check and save happen inside one lock, and a unique rule refuses a second booking for the same room and date. <a href="staff.html#race-btn">Run the 50-guest test →</a></p>
+          </article>
+          <article class="card">
+            <h3>API / security</h3>
+            <p><strong>Problem:</strong> the payment key is visible in the website code, or the server trusts a price sent by the client.</p>
+            <p><strong>In the site:</strong> the page sends only a token, the request has no price, and the server calculates the total. No secret key exists in any JavaScript file.</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- 4 ============================================== -->
+      <section class="doc-section" id="cia">
+        <p class="source">Task 06 · Section 4</p>
+        <h2>4. CIA analysis: double booking</h2>
+        <p><strong>Chosen failure:</strong> Database / ACID, double booking of the same room. <strong>Most important CIA principle: Integrity.</strong></p>
+        <div class="grid grid--3">
+          <div class="card card--flat"><h3>Why Integrity</h3><p>Integrity means that data is correct and not changed in a wrong way. The most important data in a hotel is “one room = one guest for one date”. A double booking makes it wrong.</p></div>
+          <div class="card card--flat"><h3>The solution</h3><p>One database transaction for the whole booking step, and a lock on the room for the chosen dates. The server confirms only after payment succeeds. If payment fails, the transaction is rolled back and the room is free again.</p></div>
+          <div class="card card--flat"><h3>Second safety layer</h3><p>A unique constraint: even if the server code has a bug, the database does not accept a second booking for the same room on the same date.</p></div>
+        </div>
+        <p style="margin-top:1rem"><strong>Step to protect first (Part B):</strong> the step where the server checks that the room is free and saves the booking. The payment step and the email step depend on it.</p>
+      </section>
+
+      <!-- 5 ============================================== -->
+      <section class="doc-section" id="data">
+        <p class="source">Data task · Parts 1 and 2</p>
+        <h2>5. Data and database design</h2>
+
+        <h3>Entity-relationship diagram</h3>
+        <div class="er-wrap">
+          <figure class="figure figure--dark" style="margin:0">
+            <img src="assets/er-diagram.jpg" alt="ER diagram. ROOM_TYPES defines many ROOMS. ROOMS are assigned to many BOOKINGS. USERS make many BOOKINGS. Tables: ROOM_TYPES (room_type_id PK, type_name UK, price_per_night), ROOMS (room_id PK, room_number UK, room_type_id FK), USERS (user_id PK, first_name, last_name, email UK, phone_number), BOOKINGS (booking_id PK, user_id FK, room_id FK, check_in_date, check_out_date, status).">
+            <figcaption>ER diagram: PK = primary key, FK = foreign key, UK = unique key.</figcaption>
+          </figure>
+          <div>
+            <p>Four tables, three relationships:</p>
+            <ul>
+              <li><strong>ROOM_TYPES defines ROOMS</strong>: one type (Standard, Deluxe, Suite) has many rooms. The price is stored once, in the type.</li>
+              <li><strong>ROOMS are assigned to BOOKINGS</strong>: one room can have many bookings over time.</li>
+              <li><strong>USERS make BOOKINGS</strong>: one guest can make many bookings. <code>email</code> is unique.</li>
+            </ul>
+            <h3>Where each table appears in the site</h3>
+            <div class="table-wrap"><table class="data">
+              <thead><tr><th>Table</th><th>Used in</th></tr></thead>
+              <tbody>
+                <tr><td>ROOM_TYPES</td><td>Room cards on Home, “Room type” dropdown and price in the booking form</td></tr>
+                <tr><td>ROOMS</td><td>Room number shown after booking, room board in the staff panel</td></tr>
+                <tr><td>USERS</td><td>Step 2 of the form: first name, last name, email, phone number</td></tr>
+                <tr><td>BOOKINGS</td><td>Dates, status, “My bookings”, staff table</td></tr>
+              </tbody>
+            </table></div>
+            <div class="alert alert--info small" style="margin-top:1rem">The first draft of the Data task listed <code>total_price</code> in BOOKINGS and kept the room type inside ROOMS. The ER diagram improves this by moving the type and price to ROOM_TYPES. The site keeps <code>total_price</code> in each booking as well, because the server must <em>lock</em> the price at booking time (see below).</div>
+          </div>
+        </div>
+
+        <h3>Data types</h3>
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>Data</th><th>Type</th><th>Where stored</th></tr></thead>
+          <tbody>
+            <tr><td>Guest name and phone number</td><td><span class="tag">Structured</span></td><td>Predefined text/varchar fields in SQL</td></tr>
+            <tr><td>Payment amount and booking dates</td><td><span class="tag">Structured</span></td><td>Numeric and date/timestamp fields</td></tr>
+            <tr><td>Booking confirmation invoice</td><td><span class="tag">Semi-structured</span></td><td>JSON/XML payload sent via API and generated receipts</td></tr>
+            <tr><td>Special requests and hotel reviews</td><td><span class="tag">Unstructured</span></td><td>Free-form text comments written by guests</td></tr>
+          </tbody>
+        </table></div>
+
+        <h3>Data quality: <code>check_in_date</code></h3>
+        <ul>
+          <li><strong>Wrong or inconsistent:</strong> overbooking, or empty rooms when guests arrive.</li>
+          <li><strong>Missing:</strong> the system cannot process payment or issue room keys.</li>
+          <li><strong>Old:</strong> historical dates clutter live inventory and give wrong availability counts.</li>
+        </ul>
+        <p class="muted">In the site: date pickers have a <code>min</code> date, check-out must be after check-in, and the server validates the dates again.</p>
+
+        <h3>Data → Information → Decision</h3>
+        <div class="dikw">
+          <div class="card"><h3>Data</h3><p>Daily timestamps, room categories and booking prices for every reservation over 6 months.</p></div>
+          <div class="card"><h3>Information</h3><p>Deluxe rooms have 95% occupancy on weekends, while Standard rooms are only 40% occupied on weekdays.</p></div>
+          <div class="card"><h3>Decision</h3><p>Launch dynamic pricing: raise weekend Deluxe rates by 15% and offer a weekday discount package on Standard rooms.</p></div>
+        </div>
+
+        <h3>API data contract (JSON)</h3>
+        <p>The backend decision: the server <strong>calculates and locks <code>total_price</code></strong> at booking creation and stores it as DECIMAL. This is Reliable and Secure: the browser cannot tamper with the price, and there are no floating-point rounding errors.</p>
+        <div class="er-wrap" style="grid-template-columns:minmax(0,520px) 1fr">
+          <figure class="figure" style="margin:0">
+            <img src="assets/json-payload.png" alt="Screenshot of main.json in VS Code showing a request with user_id, room_id, check_in_date, check_out_date and special_requests, and a response with booking_id, total_price 450.00 and status CONFIRMED.">
+            <figcaption>Screenshot from the Data task: JSON request and response.</figcaption>
+          </figure>
+          <div>
+            <p>Statuses: <span class="chip chip--PENDING">PENDING</span> <span class="chip chip--CONFIRMED">CONFIRMED</span> <span class="chip chip--CANCELLED">CANCELLED</span></p>
+            <p class="small muted">The example: room 15, 3 nights → 450.00. Our website reproduces it: room 15 is a Deluxe room at 150 per night.</p>
+          </div>
+        </div>
+
+        <h3>Knowledge in an experienced employee’s head</h3>
+        <p>An experienced receptionist knows that room 204 is next to the elevator and noisy at night, and that a regular guest wants a quiet room on a high floor. This is not in the database, so a new employee does not know it. To save and share it:</p>
+        <ol>
+          <li>Add a <code>room_notes</code> field to ROOMS and a <code>preferences</code> field for returning guests in USERS.</li>
+          <li>Create a simple internal knowledge base (wiki or shared document) with tips for each room and for handling overbooking.</li>
+          <li>Ask experienced staff to train new employees and review the notes every few months.</li>
+        </ol>
+        <p class="muted">In the site: <code>room_notes</code> exists in the seed data. Hover room 204 in the <a href="staff.html">room board</a>. When a guest writes “quiet room, high floor”, the server gives a quiet high-floor room, and noisy rooms are given last.</p>
+      </section>
+
+      <!-- 6 ============================================== -->
+      <section class="doc-section" id="plan">
+        <p class="source">Task 07 · Part A</p>
+        <h2>6. Project plan</h2>
+        <h3>Work Breakdown Structure (WBS)</h3>
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>No.</th><th>Work package</th><th>Deliverable</th><th>Owner</th></tr></thead>
+          <tbody>
+            <tr><td>1.1</td><td>Design the guest screens (search, room choice, payment page)</td><td>D1 Guest website</td><td>Akbayev Anzor</td></tr>
+            <tr class="mine"><td>1.2</td><td>Build the search and booking pages</td><td>D1 Guest website</td><td><strong>Khassen Iliyas</strong></td></tr>
+            <tr><td>2.1</td><td>Design the database and booking rules (one room, one guest, one date)</td><td>D2 Database and staff panel</td><td>Zinullin Nursultan</td></tr>
+            <tr><td>2.2</td><td>Build the staff admin panel</td><td>D2 Database and staff panel</td><td>Akbayev Anzor</td></tr>
+            <tr class="mine"><td>3.1</td><td>Connect the payment API</td><td>D3 Payment and messages</td><td><strong>Khassen Iliyas</strong></td></tr>
+            <tr><td>3.2</td><td>Set up email confirmations</td><td>D3 Payment and messages</td><td>Zinullin Nursultan</td></tr>
+          </tbody>
+        </table></div>
+
+        <h3>Risks and actions</h3>
+        <div class="table-wrap"><table class="data">
+          <thead><tr><th>No.</th><th>Risk</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Two guests book the same room at the same time (double booking).</td><td>One database transaction and a unique rule for room and date. Test with many requests at the same time.</td></tr>
+            <tr><td>2</td><td>The payment service is slow or not available.</td><td>Show a clear “pending” status and do not take payment twice. Receptionists can take payment at the hotel as a backup.</td></tr>
+          </tbody>
+        </table></div>
+
+        <h3>Acceptance criteria</h3>
+        <ul>
+          <li>A guest can book and pay in less than <strong>3 minutes</strong> and receives the confirmation email in less than <strong>1 minute</strong>.</li>
+          <li>In a test with <strong>50 requests</strong> at the same time for one room, only one booking is saved, and no booking is lost in <strong>100 test bookings</strong>. → <a href="staff.html">Run both tests in the staff panel</a></li>
+        </ul>
+
+        <h3>Project closure actions</h3>
+        <ul>
+          <li>Train the receptionists in two sessions and give them a short user guide.</li>
+          <li>Get written approval from the hotel manager and hold a lessons-learned meeting.</li>
+        </ul>
+      </section>
+
+      <!-- 7 ============================================== -->
+      <section class="doc-section" id="pilot">
+        <p class="source">Task 07 · Part B · Implementation strategy</p>
+        <h2>7. Chosen strategy: pilot implementation</h2>
+        <p>A bug in saving bookings has an unknown cause, so a full launch is too risky. In a pilot, only <strong>10 rooms and two receptionists</strong> use the new system first. The pilot is postponed by a few days to fix the problem.</p>
+        <div class="grid grid--3">
+          <div class="card"><h3>Before launch</h3><ul><li>Find the cause in server and database logs, then fix it.</li><li>Test again: 200 test bookings and 50 bookings at the same time for one room.</li><li>Every booking must appear in the database.</li><li>Add an error message and a daily check of bookings against payments.</li></ul></div>
+          <div class="card"><h3>During transition</h3><ul><li>Receptionists write each booking in the paper book <em>and</em> in the system.</li><li>Every evening they compare both lists.</li></ul></div>
+          <div class="card"><h3>Stop and go rules</h3><ul><li>If data is lost again, stop the pilot and use the manual process only.</li><li>Open all rooms after two weeks without lost data.</li></ul></div>
+        </div>
+      </section>
+
+      <!-- 8 ============================================== -->
+      <section class="doc-section" id="team">
+        <p class="source">Task 06, Task 07 · Team</p>
+        <h2>8. Team and responsibilities</h2>
+        <div class="grid grid--3">
+          <article class="card team-card">
+            <h3>Khassen Iliyas</h3>
+            <p class="muted small">Frontend and payment connection</p>
+            <p><span class="tag">WBS 1.2</span><span class="tag">WBS 3.1</span></p>
+            <ul class="small"><li>Search and booking pages (this website)</li><li>Payment step: card validation and token, send to the payment API</li><li>System map of the booking flow; Server and Payment API descriptions (Task 06)</li></ul>
+          </article>
+          <article class="card team-card">
+            <h3>Zinullin Nursultan</h3>
+            <p class="muted small">Database, booking rules and email</p>
+            <p><span class="tag">WBS 2.1</span><span class="tag">WBS 3.2</span></p>
+            <ul class="small"><li>Database design and the rule “one room, one guest, one date”</li><li>Transactions, locks and unique constraint</li><li>Email confirmations</li></ul>
+          </article>
+          <article class="card team-card">
+            <h3>Akbayev Anzor</h3>
+            <p class="muted small">Screen design and staff panel</p>
+            <p><span class="tag">WBS 1.1</span><span class="tag">WBS 2.2</span></p>
+            <ul class="small"><li>Design of the guest screens</li><li>Staff admin panel</li></ul>
+          </article>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <footer id="site-footer"></footer>
+  <script src="js/data.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/api-client.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/docs.js"></script>
+</body>
+</html>

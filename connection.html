@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Backend connection – GrandStay Hotel</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header id="site-header"></header>
+
+  <main id="main" class="section">
+    <div class="container">
+      <p class="eyebrow">Frontend ⇄ Backend</p>
+      <h1 style="font-size:2rem">Backend connection</h1>
+      <p class="muted" style="max-width:70ch">This page proves that the website is connected to the server and the database: live status, the real API calls, and the real rows in the database.</p>
+
+      <div id="offline-note"></div>
+
+      <!-- 1. Architecture + status -->
+      <section class="card" style="margin-bottom:1.5rem">
+        <h2 style="font-size:1.3rem">1 · The connection</h2>
+        <div class="arch" id="arch" aria-label="Architecture">
+          <div class="node" id="n-front"><b>Frontend</b><span class="muted small">HTML · CSS · JavaScript<br><code>js/api-client.js</code></span></div>
+          <div class="wire"><strong>⇄</strong>fetch()<br>JSON over HTTP</div>
+          <div class="node" id="n-back"><b>Backend</b><span class="muted small">Node.js server<br><code>server/server.js</code></span></div>
+          <div class="wire"><strong>⇄</strong>SQL queries</div>
+          <div class="node" id="n-db"><b>Database</b><span class="muted small">SQLite file<br><code>server/hotel.db</code></span></div>
+        </div>
+        <div class="table-wrap" style="margin-top:1rem"><table class="data">
+          <tbody>
+            <tr><th scope="row">Status</th><td id="c-status">checking…</td></tr>
+            <tr><th scope="row">Server address</th><td id="c-base">–</td></tr>
+            <tr><th scope="row">Response time</th><td id="c-ms">–</td></tr>
+            <tr><th scope="row">Server running</th><td id="c-up">–</td></tr>
+            <tr><th scope="row">Database</th><td id="c-db">–</td></tr>
+            <tr><th scope="row">API calls from this page session</th><td id="c-calls">0</td></tr>
+          </tbody>
+        </table></div>
+        <div class="toolbar" style="margin-top:1rem"><button class="btn btn--sm" id="ping-btn" type="button">Ping the server</button>
+          <a class="btn btn--sm btn--ghost" href="booking.html">Make a booking →</a></div>
+      </section>
+
+      <!-- 2. API tester -->
+      <section class="card" style="margin-bottom:1.5rem">
+        <h2 style="font-size:1.3rem">2 · Try the API (like Postman)</h2>
+        <p class="muted small">Each button sends a real HTTP request to the server and shows the real answer.</p>
+        <div class="api-tester" id="tester">
+          <button class="btn btn--sm btn--teal" data-req="GET /api/health">GET /api/health</button>
+          <button class="btn btn--sm btn--teal" data-req="GET /api/room-types">GET /api/room-types</button>
+          <button class="btn btn--sm btn--teal" data-req="GET /api/availability">GET /api/availability?in&amp;out</button>
+          <button class="btn btn--sm btn--teal" data-req="GET /api/staff/bookings">GET /api/staff/bookings</button>
+        </div>
+        <p class="small" id="tester-meta" style="margin:.2rem 0"></p>
+        <pre><code id="tester-out">// press a button</code></pre>
+        <p class="small muted">Same thing in a terminal: <code id="curl-line">curl http://localhost:3000/api/health</code></p>
+      </section>
+
+      <!-- 3. live log -->
+      <section class="card" style="margin-bottom:1.5rem">
+        <h2 style="font-size:1.3rem">3 · Live request log (from the server)</h2>
+        <p class="muted small">Open <a href="booking.html" target="_blank" rel="noopener">the booking page</a> in another tab, make a booking and watch the requests appear here. Refreshes every 1.5 seconds.</p>
+        <div class="table-wrap"><table class="data" id="log-table">
+          <thead><tr><th>Time</th><th>Method</th><th>URL</th><th>Status</th><th>ms</th></tr></thead>
+          <tbody><tr><td colspan="5" class="muted">Waiting for requests…</td></tr></tbody>
+        </table></div>
+      </section>
+
+      <!-- 4. live database -->
+      <section class="card">
+        <h2 style="font-size:1.3rem">4 · Live data from the database</h2>
+        <p class="muted small">These rows are read from <code>hotel.db</code> by the server (<code>GET /api/tables/…</code>). Make a booking and press refresh: the new row is there. Stop the server, start it again: the data is still there.</p>
+        <div class="toolbar">
+          <label for="table-select" class="sr-only">Table</label>
+          <select id="table-select">
+            <option>bookings</option><option>users</option><option>rooms</option><option>room_types</option><option>email_outbox</option>
+          </select>
+          <button class="btn btn--sm" id="table-refresh" type="button">Refresh</button>
+          <span class="muted small" id="table-count"></span>
+        </div>
+        <div class="table-wrap"><table class="data" id="db-table"><thead></thead><tbody></tbody></table></div>
+      </section>
+
+      <section style="margin-top:1.5rem" class="card card--flat">
+        <h3>Where the connection is in the code</h3>
+        <ul class="small">
+          <li><code>js/api-client.js</code> → <code>fetch('/api/bookings', …)</code> sends the booking JSON to the server.</li>
+          <li><code>server/server.js</code> → <code>POST /api/bookings</code> checks, calculates the price, writes to the database.</li>
+          <li><code>server/schema.sql</code> → the tables from the ER diagram + the trigger that blocks double bookings.</li>
+          <li><code>booking.js</code> did not change: it still calls <code>HotelApi.createBooking()</code>.</li>
+        </ul>
+      </section>
+    </div>
+  </main>
+
+  <footer id="site-footer"></footer>
+  <script src="js/data.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/api-client.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/connection.js"></script>
+</body>
+</html>

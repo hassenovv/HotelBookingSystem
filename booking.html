@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Book a room – GrandStay Hotel</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header id="site-header"></header>
+
+  <main id="main" class="container booking-layout">
+    <section aria-labelledby="page-title">
+      <h1 id="page-title" style="font-size:2rem">Book your room</h1>
+
+      <ol class="stepper" id="stepper" aria-label="Booking steps">
+        <li class="is-active">1 · Your stay</li>
+        <li>2 · Your details</li>
+        <li>3 · Payment</li>
+      </ol>
+
+      <noscript><div class="alert alert--bad">This page needs JavaScript to book a room.</div></noscript>
+
+      <form id="booking-form" class="card" novalidate autocomplete="off">
+        <div id="form-alert" role="alert"></div>
+
+        <!-- STEP 1: stay (check_in_date, check_out_date, room type) -->
+        <div class="step-panel" data-step="1">
+          <h2>Your stay</h2>
+          <div class="row">
+            <div class="field" data-field="check_in_date">
+              <label for="check-in">Check-in</label>
+              <input type="date" id="check-in" required>
+              <p class="error"></p>
+            </div>
+            <div class="field" data-field="check_out_date">
+              <label for="check-out">Check-out</label>
+              <input type="date" id="check-out" required>
+              <p class="error"></p>
+            </div>
+          </div>
+          <div class="field" data-field="room_type_id">
+            <label for="room-type">Room type</label>
+            <select id="room-type" required><option value="">Loading…</option></select>
+            <p class="hint" id="avail-note"></p>
+            <p class="error"></p>
+          </div>
+          <div class="step-actions">
+            <span></span>
+            <button type="button" class="btn" data-action="next">Continue</button>
+          </div>
+        </div>
+
+        <!-- STEP 2: guest (USERS table: first_name, last_name, email, phone_number) -->
+        <div class="step-panel" data-step="2" hidden>
+          <h2>Your details</h2>
+          <div class="row">
+            <div class="field" data-field="first_name">
+              <label for="first-name">First name</label>
+              <input id="first-name" autocomplete="given-name" maxlength="50" required>
+              <p class="error"></p>
+            </div>
+            <div class="field" data-field="last_name">
+              <label for="last-name">Last name</label>
+              <input id="last-name" autocomplete="family-name" maxlength="50" required>
+              <p class="error"></p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="field" data-field="email">
+              <label for="email">Email</label>
+              <input id="email" type="email" autocomplete="email" maxlength="120" required>
+              <p class="hint">Your confirmation will be sent here.</p>
+              <p class="error"></p>
+            </div>
+            <div class="field" data-field="phone_number">
+              <label for="phone">Phone number</label>
+              <input id="phone" type="tel" autocomplete="tel" maxlength="30" placeholder="+7 701 123 45 67" required>
+              <p class="error"></p>
+            </div>
+          </div>
+          <div class="field" data-field="special_requests">
+            <label for="special">Special requests <span class="muted">(optional)</span></label>
+            <textarea id="special" rows="3" maxlength="300" placeholder="For example: quiet room, high floor"></textarea>
+            <p class="hint">Reception reads these before assigning your room.</p>
+            <p class="error"></p>
+          </div>
+          <div class="step-actions">
+            <button type="button" class="btn btn--ghost" data-action="back">Back</button>
+            <button type="button" class="btn" data-action="next">Continue to payment</button>
+          </div>
+        </div>
+
+        <!-- STEP 3: payment (card is tokenised in the browser, only the token is sent) -->
+        <div class="step-panel" data-step="3" hidden>
+          <h2>Payment</h2>
+          <div class="alert alert--info small">🔒 Your card number never reaches the hotel server. This page turns it into a one-time token and sends only the token.</div>
+          <div class="field" data-field="card_name">
+            <label for="card-name">Name on card</label>
+            <input id="card-name" autocomplete="cc-name" maxlength="60">
+            <p class="error"></p>
+          </div>
+          <div class="field" data-field="card_number">
+            <label for="card-number">Card number</label>
+            <input id="card-number" inputmode="numeric" autocomplete="cc-number" placeholder="4242 4242 4242 4242" maxlength="23">
+            <p class="error"></p>
+          </div>
+          <div class="row">
+            <div class="field" data-field="card_exp">
+              <label for="card-exp">Expiry (MM/YY)</label>
+              <input id="card-exp" inputmode="numeric" autocomplete="cc-exp" placeholder="12/28" maxlength="5">
+              <p class="error"></p>
+            </div>
+            <div class="field" data-field="card_cvc">
+              <label for="card-cvc">CVC</label>
+              <input id="card-cvc" inputmode="numeric" autocomplete="cc-csc" placeholder="123" maxlength="4" type="password">
+              <p class="error"></p>
+            </div>
+          </div>
+
+          <details class="test-cards card card--flat" open style="padding:.8rem 1rem">
+            <summary><strong>Demo cards</strong> (nothing is really charged)</summary>
+            <table>
+              <tr><td><button type="button" data-card="4242 4242 4242 4242">4242 4242 4242 4242</button></td><td>Payment succeeds</td></tr>
+              <tr><td><button type="button" data-card="4000 0000 0000 0002">4000 0000 0000 0002</button></td><td>Card declined → room released</td></tr>
+              <tr><td><button type="button" data-card="4000 0000 0000 9995">4000 0000 0000 9995</button></td><td>Payment service timeout → PENDING</td></tr>
+            </table>
+            <p class="muted small" style="margin:.6rem 0 0">Use any future expiry date and any 3-digit CVC.</p>
+          </details>
+
+          <div class="step-actions">
+            <button type="button" class="btn btn--ghost" data-action="back">Back</button>
+            <button type="submit" class="btn" id="pay-btn">Pay</button>
+          </div>
+          <p class="muted small" style="margin:.8rem 0 0">Press “Pay” once. If your connection breaks you can press it again: the same request is never charged twice.</p>
+        </div>
+      </form>
+
+      <!-- RESULT (shown after the server answers) -->
+      <div id="result" class="card" hidden aria-live="polite"></div>
+    </section>
+
+    <!-- SUMMARY: the price here is only an ESTIMATE. The server calculates the real total. -->
+    <aside class="card summary" aria-label="Booking summary">
+      <h2 style="font-size:1.2rem">Your booking</h2>
+      <dl>
+        <dt>Room</dt><dd id="s-type">–</dd>
+        <dt>Check-in</dt><dd id="s-in">–</dd>
+        <dt>Check-out</dt><dd id="s-out">–</dd>
+        <dt>Nights</dt><dd id="s-nights">–</dd>
+        <dt>Rate</dt><dd id="s-rate">–</dd>
+      </dl>
+      <div class="total"><span>Estimated total</span><span id="s-total">–</span></div>
+      <p class="muted small" style="margin:.6rem 0 0">The final price is calculated and locked by the hotel server when you book.</p>
+    </aside>
+  </main>
+
+  <footer id="site-footer"></footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/api-client.js"></script>
+  <script src="js/common.js"></script>
+  <script src="js/booking.js"></script>
+</body>
+</html>
