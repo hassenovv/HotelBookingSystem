@@ -1,10 +1,10 @@
 /* ==========================================================
    server.js  -  BACKEND of the hotel booking system
-   Run:  node server/server.js      then open  http://localhost:3000
+   Run:  node backend/server.js      then open  http://localhost:3000
 
    No npm packages needed: only Node.js built-ins
      node:http    web server
-     node:sqlite  database (file server/hotel.db)
+     node:sqlite  database (file backend/hotel.db)
 
    What it does (same rules as in the reports):
    - serves the website files (HTML/CSS/JS)
@@ -28,11 +28,11 @@ catch (e) {
   process.exit(1);
 }
 
-require('../js/data.js');                       // seed data (room types + 40 rooms), shared with the frontend
+require('../frontend/js/data.js');                       // seed data (room types + 40 rooms), shared with the frontend
 const HotelData = globalThis.HotelData;
 
 const PORT = Number(process.env.PORT) || 3000;
-const SITE_ROOT = path.join(__dirname, '..');
+const SITE_ROOT = path.join(__dirname, '..', 'frontend');   // the website files
 const DB_FILE = process.env.DB_FILE || path.join(__dirname, 'hotel.db');
 const STARTED = Date.now();
 
@@ -371,7 +371,7 @@ function serveStatic(req, res, url) {
   if (rel === '/') rel = '/index.html';
   const file = path.normalize(path.join(SITE_ROOT, rel));
   const inside = file.indexOf(SITE_ROOT + path.sep) === 0;
-  const hidden = rel.indexOf('/server/') === 0 || rel.indexOf('/.') >= 0;       // never serve the server code or the database
+  const hidden = rel.indexOf('/.') >= 0;       // only files inside frontend/ are served, never hidden files
   if (!inside || hidden || !fs.existsSync(file) || !fs.statSync(file).isFile()) {
     res.writeHead(404, { 'Content-Type': 'text/plain' }); return res.end('Not found');
   }

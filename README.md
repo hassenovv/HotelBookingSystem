@@ -1,26 +1,50 @@
-# GrandStay Hotel – Hotel Booking System (frontend + backend)
+# GrandStay Hotel – Hotel Booking System
 
-## Run (needs Node.js 22.5 or newer: https://nodejs.org, LTS)
+Course project (Introduction to Information Systems, KBTU): a hotel booking website with a backend and a database.
+
+**Team guide (Russian): [docs/TEAM_GUIDE_RU.md](docs/TEAM_GUIDE_RU.md)**
+
+## Repository structure
+
+```
+HotelBookingSystem/
+├── frontend/              the website (HTML, CSS, JavaScript)
+│   ├── index.html         home: search + room types
+│   ├── booking.html       3-step booking form + payment
+│   ├── bookings.html      "My bookings"
+│   ├── staff.html         staff panel + acceptance tests
+│   ├── connection.html    live proof: frontend ⇄ backend ⇄ database
+│   ├── docs.html          project documentation (reports)
+│   ├── css/styles.css     all styles
+│   ├── js/                page scripts + api-client.js (connection to the backend)
+│   └── assets/            ER diagram, system map, JSON screenshot
+├── backend/               the server and the database
+│   ├── server.js          HTTP API (Node.js, no packages needed)
+│   ├── schema.sql         tables from the ER diagram + anti-double-booking trigger
+│   ├── seed.sql           starting data (3 room types, 40 rooms)
+│   └── hotel.db           ready SQLite database
+├── docs/                  guides for the team
+├── start-server.bat       Windows: start everything
+└── start-server.sh        Mac/Linux: start everything
+```
+
+## Run
+
+Needs **Node.js 22.5 or newer** (https://nodejs.org, LTS). No `npm install`.
+
 - Windows: double-click `start-server.bat`
-- Mac/Linux: `./start-server.sh` or `node server/server.js`
-- Open http://localhost:3000  (the server also serves the website)
-- Proof of the connection: http://localhost:3000/connection.html
+- Mac/Linux: `./start-server.sh` (or `node backend/server.js`)
+- Open http://localhost:3000. Proof of the connection: http://localhost:3000/connection.html
 
-No `npm install` is needed.
+If the server is not running, the website falls back to a browser-only demo (badge: "Demo mode").
 
-## Database (SQLite, in `server/`)
-- `hotel.db`: ready database file (3 room types, 40 rooms, no bookings). The server uses it directly.
-- `schema.sql`: all tables from the ER diagram + the trigger that blocks double bookings.
-- `seed.sql`: the starting data. Rebuild a clean database: `cat server/schema.sql server/seed.sql | sqlite3 server/hotel.db`
-- If the file is missing, the server creates and fills it by itself on the first start.
-- Reset to clean data any time: Staff panel → *Reset all data*, or `git checkout server/hotel.db`.
-If the server is not running, the site falls back to a browser-only demo (badge: "Demo mode").
+## Database
 
-## Files
-- `index.html`, `booking.html`, `bookings.html`: guest website
-- `staff.html`: staff panel and acceptance tests
-- `connection.html`: live proof of frontend ⇄ backend ⇄ database
-- `docs.html`: project documentation (Task 06, Data task, Task 07)
-- `js/api-client.js`: the frontend → backend connection (fetch)
-- `js/api.js`: browser-only fallback backend
-- `server/server.js`: backend (HTTP API). `server/schema.sql`: database tables
+- `backend/hotel.db` is used directly by the server.
+- Rebuild a clean database: `cat backend/schema.sql backend/seed.sql | sqlite3 backend/hotel.db`
+- Reset data: Staff panel → *Reset all data*, or `git checkout backend/hotel.db`.
+
+## What is real and what is simulated
+
+Real: web server, HTTP API, SQLite database, price calculation on the server, protection against double booking.
+Simulated: card payment (no real money) and confirmation email (written to the `email_outbox` table).

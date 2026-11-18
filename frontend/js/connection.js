@@ -28,7 +28,7 @@
         Object.keys(t).map(function (k) { return k + ': ' + t[k]; }).join(', ');
     }
     el('offline-note').innerHTML = live ? '' :
-      '<div class="alert alert--warn"><strong>The backend is not running.</strong> Start it in a terminal: <code>node server/server.js</code>, then open <a href="http://localhost:3000/connection.html">http://localhost:3000/connection.html</a>.</div>';
+      '<div class="alert alert--warn"><strong>The backend is not running.</strong> Start it in a terminal: <code>node backend/server.js</code>, then open <a href="http://localhost:3000/connection.html">http://localhost:3000/connection.html</a>.</div>';
   });
   el('ping-btn').addEventListener('click', async function () {
     const st = await API.ping();

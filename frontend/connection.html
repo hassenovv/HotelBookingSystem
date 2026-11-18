@@ -24,9 +24,9 @@
         <div class="arch" id="arch" aria-label="Architecture">
           <div class="node" id="n-front"><b>Frontend</b><span class="muted small">HTML · CSS · JavaScript<br><code>js/api-client.js</code></span></div>
           <div class="wire"><strong>⇄</strong>fetch()<br>JSON over HTTP</div>
-          <div class="node" id="n-back"><b>Backend</b><span class="muted small">Node.js server<br><code>server/server.js</code></span></div>
+          <div class="node" id="n-back"><b>Backend</b><span class="muted small">Node.js server<br><code>backend/server.js</code></span></div>
           <div class="wire"><strong>⇄</strong>SQL queries</div>
-          <div class="node" id="n-db"><b>Database</b><span class="muted small">SQLite file<br><code>server/hotel.db</code></span></div>
+          <div class="node" id="n-db"><b>Database</b><span class="muted small">SQLite file<br><code>backend/hotel.db</code></span></div>
         </div>
         <div class="table-wrap" style="margin-top:1rem"><table class="data">
           <tbody>
@@ -86,8 +86,8 @@
         <h3>Where the connection is in the code</h3>
         <ul class="small">
           <li><code>js/api-client.js</code> → <code>fetch('/api/bookings', …)</code> sends the booking JSON to the server.</li>
-          <li><code>server/server.js</code> → <code>POST /api/bookings</code> checks, calculates the price, writes to the database.</li>
-          <li><code>server/schema.sql</code> → the tables from the ER diagram + the trigger that blocks double bookings.</li>
+          <li><code>backend/server.js</code> → <code>POST /api/bookings</code> checks, calculates the price, writes to the database.</li>
+          <li><code>backend/schema.sql</code> → the tables from the ER diagram + the trigger that blocks double bookings.</li>
           <li><code>booking.js</code> did not change: it still calls <code>HotelApi.createBooking()</code>.</li>
         </ul>
       </section>

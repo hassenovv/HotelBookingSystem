@@ -1,6 +1,6 @@
 -- ==========================================================
 -- schema.sql  -  database of the hotel (from the ER diagram)
--- Engine: SQLite (one file: server/hotel.db). The same SQL idea
+-- Engine: SQLite (one file: backend/hotel.db). The same SQL idea
 -- works in PostgreSQL (see docs/FRIEND_ROLE.md).
 -- ==========================================================
 

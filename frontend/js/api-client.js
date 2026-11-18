@@ -4,7 +4,7 @@
    Loaded after api.js (the mock). It replaces window.HotelApi with
    a version that talks to the real server with fetch():
 
-        browser (this file)  --fetch JSON-->  server/server.js  --SQL-->  hotel.db
+        browser (this file)  --fetch JSON-->  backend/server.js  --SQL-->  hotel.db
 
    The pages did NOT change: they still call HotelApi.createBooking(...)
    etc. Only what is behind these methods changed.

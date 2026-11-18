@@ -1,3 +1,4 @@
-server/hotel.db-wal
-server/hotel.db-shm
+backend/hotel.db-wal
+backend/hotel.db-shm
 node_modules/
+.DS_Store
